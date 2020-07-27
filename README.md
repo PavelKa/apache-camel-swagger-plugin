@@ -7,15 +7,33 @@ Library [camel-swagger-java](https://camel.apache.org/components/latest/others/s
 
 ## Adding plugin to your pom.xml
 ```xml
- <plugin>
+    <plugin>
                 <groupId>cz.kahle.maven</groupId>
                 <artifactId>apache-camel-swagger-plugin</artifactId>
-                <version>1.0.4</version>
+                <version>1.0.5-SNAPSHOT</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>XY</groupId>
+                        <artifactId>YY</artifactId>
+                        <version>1.0.0-SNAPSHOT</version>
+                        <scope>compile</scope>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>com.fasterxml.jackson.core</groupId>
+                                <artifactId>jackson-core</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>com.sun.xml.bind</groupId>
+                                <artifactId>*</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
                 <configuration>
-                    <outputDir>${project.basedir}/target/classes/META-INF</outputDir>
+                    <outputDir>${project.basedir}/target/generated-resources/swaggers</outputDir>
                     <routeBuilders>
-                        <!-- List of Router classes -->
-                        <routeBuilder>cz.kahle.maven.SimpleTestRouter</routeBuilder>
+                        <!-- List of Router classes Dependency should be defined also on project level-->
+                        <routeBuilder>xy.CamelRouter</routeBuilder>
                     </routeBuilders>
                     <schemes>
                         <scheme>https</scheme>
@@ -25,13 +43,32 @@ Library [camel-swagger-java](https://camel.apache.org/components/latest/others/s
                 <executions>
                     <execution>
                         <id>generateSwagger</id>
-                        <phase>process-classes</phase>
+                        <phase>compile</phase>
                         <goals>
                             <goal>generateSwagger</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
+```
+
+##Don't forget
+The Spring Boot Maven and Gradle plugins both package our application as executable JARs – such a file can't be used in another project since class files are put into BOOT-INF/classes. This is not a bug, but a feature.
+Classifier exec can solve this problem....
+```xml
+<plugin>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-maven-plugin</artifactId>
+    <configuration>
+        <classifier>exec</classifier>
+    </configuration>
+</plugin>
+```
+
+
+## Run integration tests
+```console
+mvn clean verify -P run-its
 ```
 
 ## Release plugin

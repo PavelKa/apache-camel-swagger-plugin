@@ -11,26 +11,35 @@ import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.swagger.RestSwaggerReader;
 import org.apache.commons.io.FileUtils;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
+import org.springframework.boot.loader.LaunchedURLClassLoader;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
-@Mojo(name = "generateSwagger", requiresDependencyCollection = ResolutionScope.TEST)
-//@Execute(goal ="generateSwagger" ,phase = LifecyclePhase.PACKAGE ,lifecycle = "generateSwagger" )
-public class SwaggerGeneratorMojo
-        extends AbstractMojo {
+@Mojo(name = "generateSwagger", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME)
+public class SwaggerGeneratorMojo extends AbstractMojo {
+
 
     private static final String FILE_SEPARTOR = File.separator;
     /**
@@ -44,12 +53,6 @@ public class SwaggerGeneratorMojo
      */
     @Parameter(property = "routeBuilders", required = true)
     private List<String> routeBuilders;
-
-    /**
-     * Project
-     */
-    @Parameter(property = "project", defaultValue = "${project}", required = true)
-    private MavenProject project;
 
 
     /**
@@ -78,33 +81,19 @@ public class SwaggerGeneratorMojo
     private String[] schemes;
 
 
-    public void execute() throws MojoFailureException {
+
+
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
         Log theLog = this.getLog();
-        List runtimeClasspathElements;
-        URLClassLoader newLoader;
-        try {
-
-            runtimeClasspathElements = project.getRuntimeClasspathElements();
-            URL[] runtimeUrls = new URL[runtimeClasspathElements.size()];
-            for (int i = 0; i < runtimeClasspathElements.size(); i++) {
-                String element = (String) runtimeClasspathElements.get(i);
-                runtimeUrls[i] = new File(element).toURI().toURL();
-            }
-            newLoader = new URLClassLoader(runtimeUrls, Thread.currentThread().getContextClassLoader());
-
-        } catch (Exception e) {
-            theLog.error("Cannot get project's RuntimeClasspathElements ", e);
-            throw new MojoFailureException("Cannot get project's RuntimeClasspathElements ", e);
-
-        }
-
 
         for (String it : routeBuilders) {
             String swagger;
             try {
-                swagger = getSwagger(it, newLoader);
+                swagger = getSwagger(it, SwaggerGeneratorMojo.class.getClassLoader() );
             } catch (Exception e) {
-                throw new MojoFailureException("Swagger creation fails", e);
+                theLog.error("Swagger creation fails: " + e.getMessage(), e);
+                throw new MojoFailureException("Swagger creation fails: " + e.getMessage(), e);
             }
             File fItJavaPath = createDirs(outputDir);
             try {
@@ -119,9 +108,10 @@ public class SwaggerGeneratorMojo
         }
     }
 
-    private String getSwagger(String routeBuilder, URLClassLoader newLoader) throws Exception {
 
-        Class<?> clazz = newLoader.loadClass(routeBuilder);
+    private String getSwagger(String routeBuilder, ClassLoader classLoader) throws Exception {
+
+        Class<?> clazz = classLoader.loadClass(routeBuilder);
         Constructor<?> ctor = clazz.getConstructor();
         RouteBuilder cr = (RouteBuilder) ctor.newInstance();
         cr.configure();

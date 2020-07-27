@@ -29,36 +29,48 @@
             <version>3.3.0</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>cz.kahle.maven.it</groupId>
+            <artifactId>simple-it-dep</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
 
+        </dependency>
     </dependencies>
     <build>
         <plugins>
             <plugin>
                 <groupId>cz.kahle.maven</groupId>
                 <artifactId>apache-camel-swagger-plugin</artifactId>
-                <version>1.0.4-SNAPSHOT</version>
+                <version>1.0.5-SNAPSHOT</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>cz.kahle.maven.it</groupId>
+                        <artifactId>simple-it-dep</artifactId>
+                        <version>1.0.1-SNAPSHOT</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <outputDir>${project.basedir}/target/classes/META-INF</outputDir>
-
                     <routeBuilders>
-                        <routeBuilder>cz.kahle.maven.SimpleTestRouter</routeBuilder>
+                        <routeBuilder>cz.kahle.maven.SimpleTestRouter2</routeBuilder>
                     </routeBuilders>
                     <schemes>
                         <scheme>https</scheme>
                         <scheme>http</scheme>
                     </schemes>
+
                 </configuration>
                 <executions>
                     <execution>
                         <id>XXXXXXXXXXXXXXXXXXXX</id>
-                        <phase>process-classes</phase>
+                        <phase>compile</phase>
                         <goals>
                             <goal>generateSwagger</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 </project>

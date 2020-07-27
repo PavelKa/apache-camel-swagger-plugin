@@ -1,5 +1,5 @@
 //println "BaseDir:" + basedir
-File touchFile = new File( basedir, "target/classes/META-INF/cz.kahle.maven.SimpleTestRouter.json" )
+File touchFile = new File( basedir, "target/classes/META-INF/cz.kahle.maven.SimpleTestRouter2.json" )
 //println "Exists:" +  touchFile.exists()
 //println "IsFile:" +  touchFile.isFile()
 //println "FilePath:" + touchFile.getAbsolutePath()
