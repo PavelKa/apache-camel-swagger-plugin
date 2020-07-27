@@ -111,11 +111,6 @@
             <version>3.3.0</version>
 
         </dependency>
-        <dependency>
-            <groupId>org.mycompany</groupId>
-            <artifactId>camel-ose-springboot-xml</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
 
     </dependencies>
 
