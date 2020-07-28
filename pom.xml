@@ -6,7 +6,7 @@
 
     <groupId>cz.kahle.maven</groupId>
     <artifactId>apache-camel-swagger-plugin</artifactId>
-    <version>1.0.6-SNAPSHOT</version>
+    <version>1.0.6</version>
     <packaging>maven-plugin</packaging>
 
     <name>apache-camel-swagger-plugin Maven Plugin</name>
@@ -41,7 +41,7 @@
         <connection>scm:git:git://github.com/PavelKa/apache-camel-swagger-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:PavelKa:apache-camel-swagger-plugin.git</developerConnection>
         <url>https://github.com/PavelKa/apache-camel-swagger-plugin</url>
-        <tag>HEAD</tag>
+        <tag>apache-camel-swagger-plugin-1.0.6</tag>
     </scm>
 
     <prerequisites>
