@@ -26,7 +26,7 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 
 
-@Mojo(name = "generateSwagger", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME)
+@Mojo(name = "generateSwagger", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class SwaggerGeneratorMojo extends AbstractMojo {
 
 

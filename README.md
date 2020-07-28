@@ -43,7 +43,6 @@ Library [camel-swagger-java](https://camel.apache.org/components/latest/others/s
                 <executions>
                     <execution>
                         <id>generateSwagger</id>
-                        <phase>compile</phase>
                         <goals>
                             <goal>generateSwagger</goal>
                         </goals>
